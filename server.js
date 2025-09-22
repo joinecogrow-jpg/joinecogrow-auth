@@ -31,12 +31,63 @@ const transporter = nodemailer.createTransport({
 // JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || "joinecogrow-secret-2025";
 
-// ==================== HEALTH CHECK ENDPOINTS ====================
-// These MUST be defined before other routes
+// ==================== ROOT & HEALTH ENDPOINTS ====================
 
-// Primary health check endpoint for DigitalOcean
+// Root welcome route - MUST be first [[1]][[2]]
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to JoinEcoGrow Authentication Service',
+    version: '1.0.0',
+    status: 'operational',
+    description: 'Revolutionary sustainable living platform authentication API',
+    features: {
+      total: 750,
+      categories: [
+        'DIY Eco-Growing (88 features)',
+        'Tree Planting & Tracking (91 features)',
+        'Entertainment Hub (63 features)',
+        'Gaming Center (55 features)',
+        'AI Assistant (68 features)',
+        'Blockchain & NFTs (42 features)',
+        'Community Forums (87 features)',
+        'IoT Sensors (38 features)',
+        'Education Platform (52 features)',
+        'Analytics Dashboard (47 features)',
+        'Commerce Engine (45 features)',
+        'Enterprise Tools (74 features)'
+      ]
+    },
+    endpoints: {
+      health: {
+        '/health': 'Basic health check',
+        '/api/health': 'API health with metrics',
+        '/auth/health': 'Auth service health status'
+      },
+      authentication: {
+        '/auth/register': 'POST - User registration',
+        '/auth/login': 'POST - User login',
+        '/auth/logout': 'POST - User logout',
+        '/auth/refresh': 'POST - Refresh access token',
+        '/auth/profile': 'GET - Get user profile',
+        '/auth/profile': 'PUT - Update user profile'
+      },
+      security: {
+        '/auth/2fa/setup': 'POST - Setup two-factor authentication',
+        '/auth/2fa/verify': 'POST - Verify 2FA code',
+        '/auth/password/reset-request': 'POST - Request password reset',
+        '/auth/password/reset': 'POST - Reset password'
+      }
+    },
+    documentation: 'https://docs.joinecogrow.com/api/auth',
+    support: 'support@joinecogrow.com',
+    github: 'https://github.com/joinecogrow-jpg/joinecogrow-auth',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Health Check
 app.get("/health", (req, res) => {
-  res.status(200).json({ 
+  res.json({ 
     status: "healthy",
     service: "joinecogrow-auth",
     timestamp: new Date().toISOString(),
@@ -45,9 +96,9 @@ app.get("/health", (req, res) => {
   });
 });
 
-// Alternative health check at /api/health
+// API Health Check [[1]]
 app.get("/api/health", (req, res) => {
-  res.status(200).json({
+  res.json({
     status: "healthy",
     service: "joinecogrow-auth",
     timestamp: new Date().toISOString(),
@@ -57,22 +108,21 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Auth-prefixed health check for consistency
+// Auth Health Check
 app.get("/auth/health", (req, res) => {
-  res.status(200).json({
+  res.json({
     status: "healthy",
     service: "joinecogrow-auth",
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development",
     uptime: process.uptime(),
-    memory: process.memoryUsage(),
-    port: PORT
+    memory: process.memoryUsage()
   });
 });
 
 // ==================== AUTHENTICATION ENDPOINTS ====================
 
-// 1. USER REGISTRATION
+// 1. USER REGISTRATION [[1]][[2]]
 app.post("/auth/register", [
   body("email").isEmail(),
   body("password").isLength({ min: 8 }),
@@ -93,7 +143,7 @@ app.post("/auth/register", [
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  // Create user object with all 750+ features support [[1]][[2]]
+  // Create user object with all 750+ features support [[1]][[3]]
   const user = {
     id: Date.now().toString(),
     email,
@@ -109,7 +159,7 @@ app.post("/auth/register", [
     emailVerified: false,
     phoneVerified: false,
     
-    // Profile for 750+ features [[1]][[3]]
+    // Profile for 750+ features [[2]][[3]]
     profile: {
       level: 1,
       xp: 0,
@@ -124,7 +174,7 @@ app.post("/auth/register", [
     roles: ["user"],
     subscription: "free",
     
-    // Settings [[2]]
+    // Settings
     settings: {
       language: "en",
       currency: "USD",
@@ -163,7 +213,7 @@ app.post("/auth/register", [
   });
 });
 
-// 2. USER LOGIN
+// 2. USER LOGIN [[1]][[2]]
 app.post("/auth/login", [
   body("email").isEmail(),
   body("password").exists()
@@ -180,7 +230,7 @@ app.post("/auth/login", [
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
-  // Check if 2FA is enabled [[1]]
+  // Check if 2FA is enabled
   if (user.twoFactorEnabled) {
     const tempToken = jwt.sign({ email, require2FA: true }, JWT_SECRET, { expiresIn: "5m" });
     return res.json({ require2FA: true, tempToken });
@@ -448,9 +498,7 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`JoinEcoGrow Auth Service running on port ${PORT}`);
-  console.log(`Health check available at:`);
-  console.log(`  - http://localhost:${PORT}/health`);
-  console.log(`  - http://localhost:${PORT}/api/health`);
-  console.log(`  - http://localhost:${PORT}/auth/health`);
+  console.log(`Visit: http://localhost:${PORT}/ for API information`);
+  console.log(`Health check: http://localhost:${PORT}/health`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
