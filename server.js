@@ -31,12 +31,46 @@ const transporter = nodemailer.createTransport({
 // JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || "joinecogrow-secret-2025";
 
-// ==================== ENDPOINTS ====================
+// ==================== HEALTH CHECK ENDPOINTS ====================
+// These MUST be defined before other routes
 
-// Health Check
+// Primary health check endpoint for DigitalOcean
 app.get("/health", (req, res) => {
-  res.json({ status: "Auth Service Running", timestamp: new Date() });
+  res.status(200).json({ 
+    status: "healthy",
+    service: "joinecogrow-auth",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || "development"
+  });
 });
+
+// Alternative health check at /api/health
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    service: "joinecogrow-auth",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    environment: process.env.NODE_ENV || "development"
+  });
+});
+
+// Auth-prefixed health check for consistency
+app.get("/auth/health", (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    service: "joinecogrow-auth",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development",
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    port: PORT
+  });
+});
+
+// ==================== AUTHENTICATION ENDPOINTS ====================
 
 // 1. USER REGISTRATION
 app.post("/auth/register", [
@@ -59,7 +93,7 @@ app.post("/auth/register", [
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  // Create user object with all 750+ features support
+  // Create user object with all 750+ features support [[1]][[2]]
   const user = {
     id: Date.now().toString(),
     email,
@@ -75,7 +109,7 @@ app.post("/auth/register", [
     emailVerified: false,
     phoneVerified: false,
     
-    // Profile for 750+ features
+    // Profile for 750+ features [[1]][[3]]
     profile: {
       level: 1,
       xp: 0,
@@ -90,7 +124,7 @@ app.post("/auth/register", [
     roles: ["user"],
     subscription: "free",
     
-    // Settings
+    // Settings [[2]]
     settings: {
       language: "en",
       currency: "USD",
@@ -114,7 +148,7 @@ app.post("/auth/register", [
       html: `
         <h1>Welcome to JoinEcoGrow!</h1>
         <p>You now have access to 750+ eco-growing features!</p>
-        <p>Click to verify: <a href="http://localhost:8081/auth/verify?token=${verifyToken}">Verify Email</a></p>
+        <p>Click to verify: <a href="${process.env.APP_URL || 'http://localhost:8081'}/auth/verify?token=${verifyToken}">Verify Email</a></p>
         <p>Your starting bonus: 100 EcoCoins!</p>
       `
     });
@@ -146,7 +180,7 @@ app.post("/auth/login", [
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
-  // Check if 2FA is enabled
+  // Check if 2FA is enabled [[1]]
   if (user.twoFactorEnabled) {
     const tempToken = jwt.sign({ email, require2FA: true }, JWT_SECRET, { expiresIn: "5m" });
     return res.json({ require2FA: true, tempToken });
@@ -287,7 +321,7 @@ app.post("/auth/password/reset-request", async (req, res) => {
       subject: "Password Reset Request",
       html: `
         <h1>Reset Your Password</h1>
-        <p>Click here to reset: <a href="http://localhost:3000/reset?token=${resetToken}">Reset Password</a></p>
+        <p>Click here to reset: <a href="${process.env.APP_URL || 'http://localhost:3000'}/reset?token=${resetToken}">Reset Password</a></p>
         <p>This link expires in 1 hour.</p>
       `
     });
@@ -402,17 +436,21 @@ app.put("/auth/profile", (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Auth Service running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/health`);
-});
-// Health Check with route prefix support
-app.get("/auth/health", (req, res) => {
-  res.json({
-    status: "Auth Service Running",
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || "development",
-    uptime: process.uptime(),
-    memory: process.memoryUsage()
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ 
+    error: 'Something went wrong!',
+    message: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`JoinEcoGrow Auth Service running on port ${PORT}`);
+  console.log(`Health check available at:`);
+  console.log(`  - http://localhost:${PORT}/health`);
+  console.log(`  - http://localhost:${PORT}/api/health`);
+  console.log(`  - http://localhost:${PORT}/auth/health`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
