@@ -406,3 +406,13 @@ app.listen(PORT, () => {
   console.log(`Auth Service running on port ${PORT}`);
   console.log(`Health check: http://localhost:${PORT}/health`);
 });
+// Health Check with route prefix support
+app.get("/auth/health", (req, res) => {
+  res.json({
+    status: "Auth Service Running",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development",
+    uptime: process.uptime(),
+    memory: process.memoryUsage()
+  });
+});
