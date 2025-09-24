@@ -1,29 +1,31 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-import { TreeService, Tree } from '@/services/trees/treeService'
+﻿import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
 
 export function useTrees() {
-  const [trees, setTrees] = useState<Tree[]>([])
+  const [trees, setTrees] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState(null)
 
-  useEffect(() => {
-    fetchTrees()
-  }, [])
-
-  const fetchTrees = async () => {
+  const refetch = async () => {
+    setLoading(true)
     try {
-      setLoading(true)
-      const data = await TreeService.fetchAllTrees()
-      setTrees(data)
+      // Mock data for now - replace with Supabase query
+      const mockTrees = [
+        { id: 1, species: 'Oak', planted: '2024-01-15', status: 'growing' },
+        { id: 2, species: 'Pine', planted: '2024-02-20', status: 'planted' }
+      ]
+      setTrees(mockTrees)
       setError(null)
     } catch (err) {
-      setError('Failed to load trees')
+      setError(err.message)
     } finally {
       setLoading(false)
     }
   }
 
-  return { trees, loading, error, refetch: fetchTrees }
+  useEffect(() => {
+    refetch()
+  }, [])
+
+  return { trees, loading, error, refetch }
 }
