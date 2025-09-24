@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '../lib/supabase'
 
 export function useTrees() {
   const [trees, setTrees] = useState([])
@@ -29,3 +29,4 @@ export function useTrees() {
 
   return { trees, loading, error, refetch }
 }
+
