@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "joinecogrow-auth",
   "version": "1.0.0",
   "private": true,
@@ -27,3 +27,6 @@
     "eslint-config-next": "14.0.4"
   }
 }
+
+
+
