@@ -1,56 +1,31 @@
-﻿export default function TreesPage() {
+﻿import React from 'react'
+
+export default function TreesPage() {
   return (
-    <div style={{ 
-      padding: '40px', 
-      fontFamily: 'Arial, sans-serif',
-      background: 'linear-gradient(135deg, #F5F5F5, #E8F5E9)'
-    }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ 
-          color: '#388E3C', 
-          fontSize: '3rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem'
-        }}>
-          🌳 Tree Tracking System
-        </h1>
+    <div className="container mx-auto p-8">
+      <h1 className="text-4xl font-bold text-green-700 mb-8">🌳 Tree Tracking System</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-green-400">
+          <h2 className="text-2xl font-bold mb-4">🌱 Plant a Tree</h2>
+          <p className="text-gray-600 mb-4">Start your journey to a greener planet</p>
+          <button className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600">
+            Plant Now
+          </button>
+        </div>
         
-        <p style={{ fontSize: '1.2rem', color: '#666', marginBottom: '40px' }}>
-          Track your planted trees and monitor their growth - Join the EcoGrow movement!
-        </p>
+        <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-blue-400">
+          <h2 className="text-2xl font-bold mb-4">📊 Track Growth</h2>
+          <p className="text-gray-600 mb-4">Monitor your trees in real-time</p>
+          <div className="text-3xl font-bold text-green-600">0 Trees</div>
+        </div>
         
-        <div style={{ 
-          marginTop: '40px', 
-          padding: '30px', 
-          background: 'white',
-          borderRadius: '20px',
-          border: '3px solid #7CB342',
-          boxShadow: '0 10px 30px rgba(124, 179, 66, 0.1)'
-        }}>
-          <h2 style={{ color: '#388E3C', marginBottom: '20px' }}>🌱 Coming Soon</h2>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-            <div style={{ padding: '15px', background: '#F1F8E9', borderRadius: '10px' }}>
-              <h3 style={{ color: '#558B2F' }}>🌿 Virtual Tree Planting</h3>
-              <p>Plant and track trees globally</p>
-            </div>
-            
-            <div style={{ padding: '15px', background: '#E8F5E9', borderRadius: '10px' }}>
-              <h3 style={{ color: '#388E3C' }}>📍 GPS Tracking</h3>
-              <p>Real-time location monitoring</p>
-            </div>
-            
-            <div style={{ padding: '15px', background: '#E3F2FD', borderRadius: '10px' }}>
-              <h3 style={{ color: '#1976D2' }}>💧 Water Monitoring</h3>
-              <p>Track watering schedules</p>
-            </div>
-            
-            <div style={{ padding: '15px', background: '#FFF3E0', borderRadius: '10px' }}>
-              <h3 style={{ color: '#F57C00' }}>🏆 NFT Certificates</h3>
-              <p>Earn blockchain certificates</p>
-            </div>
-          </div>
+        <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-yellow-400">
+          <h2 className="text-2xl font-bold mb-4">🏆 Earn NFTs</h2>
+          <p className="text-gray-600 mb-4">Get certificates for your impact</p>
+          <button className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600">
+            View Rewards
+          </button>
         </div>
       </div>
     </div>
