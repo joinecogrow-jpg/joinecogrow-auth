@@ -1,0 +1,7 @@
+﻿UI/UX DEVELOPMENT WORKFLOW [[1]] [[4]]:
+1. Research: Define user needs (e.g., tree tracking)
+2. Wireframe: Sketch in V0
+3. High-Fidelity: Generate in V0 with logo colors
+4. Refine: Use Cursor AI for animations
+5. Sync: Commit to GitHub
+6. Test: Deploy to Vercel

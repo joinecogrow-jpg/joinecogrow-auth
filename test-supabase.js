@@ -1,10 +1,16 @@
-﻿import { supabase } from '@/lib/supabase';
+﻿import { createClient } from '@supabase/supabase-js';
 
-async function testSupabase() {
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
+(async () => {
   const { data, error } = await supabase
     .from('trees')
     .select('*')
     .limit(1);
-  console.log(data, error);
-}
-testSupabase();
+
+  if (error) console.error(error);
+  else console.log('Connection successful: ', data);
+})();
