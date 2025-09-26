@@ -1,0 +1,7 @@
+﻿{
+  "name": "Feature Toggle",
+  "nodes": [
+    {"name": "GitHub PR Merge", "type": "n8n-nodes-base.webhook", "parameters": {"path": "pr-merge"}},
+    {"name": "Update Supabase", "type": "n8n-nodes-base.httpRequest", "parameters": {"url": "https://qexiyflqdrzouoimrbzn.supabase.co/rest/v1/features", "method": "PATCH"}}
+  ]
+}

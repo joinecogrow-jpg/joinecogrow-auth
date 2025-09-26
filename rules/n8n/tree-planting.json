@@ -1,0 +1,7 @@
+﻿{
+  "name": "Tree Planting Automation",
+  "nodes": [
+    {"name": "Webhook", "type": "n8n-nodes-base.webhook", "parameters": {"path": "new-tree"}},
+    {"name": "Supabase Insert", "type": "n8n-nodes-base.httpRequest", "parameters": {"url": "https://qexiyflqdrzouoimrbzn.supabase.co/rest/v1/trees", "method": "POST"}}
+  ]
+}
